@@ -1,5 +1,7 @@
 package com.jdk.qwerty.home;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -16,6 +18,8 @@ import com.jdk.qwerty.home.Fragments.Temp;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static Controller My_Controller;
+
     //Developent message  (logt + enter) #shortcut
     private static final String TAG = "MainActivity";
 
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        buildController();
         setContentView(R.layout.activity_main);
 
         //Event log
@@ -35,16 +40,15 @@ public class MainActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.container);
         setupViewPager(viewPager);
 
-        /*viewPager.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Funciona", Toast.LENGTH_SHORT).show();
-            }
-        });*/
-
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setupTabLayout();
+    }
+
+    //Método que contruye el conrolador.
+    private void buildController() {
+        SharedPreferences settings = getSharedPreferences("DATA", MODE_PRIVATE);
+        My_Controller = new Controller(settings);
     }
 
     //Customize Tab Layout
@@ -69,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new Light(), "Light");
         adapter.addFragment(new Door(), "Door");
         adapter.addFragment(new Temp(), "Temp");
-
         //Finaly we set the adapter with the SectionsPageAdapter adapter.
         viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(0);
     }
 
 }

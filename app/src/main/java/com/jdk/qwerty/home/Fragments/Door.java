@@ -3,13 +3,20 @@ package com.jdk.qwerty.home.Fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.jdk.qwerty.home.Adapter.RecSensorsAdapter;
+import com.jdk.qwerty.home.Objects.Sensor;
 import com.jdk.qwerty.home.R;
+
+import java.util.ArrayList;
 
 /**
  * Created by Administrador on 02/12/2017.
@@ -17,7 +24,7 @@ import com.jdk.qwerty.home.R;
 
 public class Door extends Fragment {
     private static final String TAG = "Door tab";
-    private Button btn;
+    private RecyclerView recSensors;
 
     @Nullable
     @Override
@@ -25,15 +32,25 @@ public class Door extends Fragment {
         //Choose the Layout for my Fragment
         View view = inflater.inflate(R.layout.door_tab, container, false);
 
-        //Using door_tab.xml objects
-        btn = (Button) view.findViewById(R.id.btnDoor);
+        //Using door_tab.xml objects with view.
+        recSensors = (RecyclerView) view.findViewById(R.id.recSensors);
+        ArrayList<Sensor> sensors = new ArrayList<>();
+        sensors.add(new Sensor("Hall", "Door", "OFF", R.drawable.door));
+        sensors.add(new Sensor("Living", "Door", "AUTO", R.drawable.door));
+        sensors.add(new Sensor("Kitchen", "Door", "ON", R.drawable.door));
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        //recSensors.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
+        recSensors.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
+
+        RecSensorsAdapter adapter = new RecSensorsAdapter(view.getContext(), sensors);
+        adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(),"door button pressed", Toast.LENGTH_SHORT).show();
+                int pisition = recSensors.getChildAdapterPosition(view);
+                Toast.makeText(getContext(), "Door#" + pisition + ": setOnClickListener implementado en clase RecSensorsAdapter.", Toast.LENGTH_SHORT).show();
             }
         });
+        recSensors.setAdapter(adapter);
 
         return view;
     }

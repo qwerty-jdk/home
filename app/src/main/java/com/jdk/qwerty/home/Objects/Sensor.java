@@ -19,8 +19,8 @@ public class Sensor {
     }
 
     public String getName() {
-
-        return "Sector: " + name;
+        //return "Sector: " + name;
+        return name;
     }
 
     public void setName(String name) {
