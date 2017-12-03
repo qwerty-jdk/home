@@ -36,7 +36,6 @@ public class Light extends Fragment {
         sensors.add(new Sensor("Living", "Light", "AUTO", R.drawable.light));
         sensors.add(new Sensor("Kitchen", "Light", "ON", R.drawable.light));
 
-
         recSensors.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
         recSensors.setAdapter(new RecSensorsAdapter(view.getContext(), sensors));
         return view;

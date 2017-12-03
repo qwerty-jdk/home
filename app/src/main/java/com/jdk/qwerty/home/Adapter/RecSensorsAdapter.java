@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jdk.qwerty.home.Objects.Sensor;
 import com.jdk.qwerty.home.R;
@@ -33,17 +34,25 @@ public class RecSensorsAdapter extends RecyclerView.Adapter<RecSensorsAdapter.Se
     public SensorViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         Log.d("counts", String.valueOf(++count));
+        SensorViewHolder x;
         return new SensorViewHolder(inflater.inflate(R.layout.sensor_row, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(SensorViewHolder holder, int position) {
+    public void onBindViewHolder(final SensorViewHolder holder, final int position) {
         try {
             Sensor sensor = sensors.get(position);
             holder.txtName.setText(sensor.getName());
             holder.txtType.setText(sensor.getType());
             holder.txtStatus.setText(sensor.getStatus());
             holder.imgSensor.setImageResource(sensor.getImage());
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(context, "Item #" + position, Toast.LENGTH_SHORT).show();
+                }
+            });
         }catch(Exception ex){
             System.out.println("KLG-Error en " + this.getClass().toString() + ".onBindViewHolder(): " + ex.getMessage());
         }
