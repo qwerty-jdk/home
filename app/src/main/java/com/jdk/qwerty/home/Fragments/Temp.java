@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import com.jdk.qwerty.home.Adapter.RecSensorsAdapter;
 import com.jdk.qwerty.home.Objects.Sensor;
+import com.jdk.qwerty.home.Objects.Status_Sensor;
+import com.jdk.qwerty.home.Objects.Type_Sensor;
+import com.jdk.qwerty.home.Objects._Temp;
 import com.jdk.qwerty.home.R;
 
 import java.util.ArrayList;
@@ -36,9 +39,9 @@ public class Temp extends Fragment {
         //Using temp_tab.xml objects with view.
         recSensors = (RecyclerView) view.findViewById(R.id.recSensors);
         ArrayList<Sensor> sensors = new ArrayList<>();
-        sensors.add(new Sensor("Hall", "Temp", "OFF", R.drawable.temp));
-        sensors.add(new Sensor("Living", "Temp", "AUTO", R.drawable.temp));
-        sensors.add(new Sensor("Kitchen", "Temp", "ON", R.drawable.temp));
+        sensors.add(new _Temp("Hall", Type_Sensor.Temp, Status_Sensor.Off, R.drawable.temp, 0.0));
+        sensors.add(new _Temp("Living", Type_Sensor.Temp, Status_Sensor.Auto, R.drawable.temp, 0.0));
+        sensors.add(new _Temp("Kitchen", Type_Sensor.Temp, Status_Sensor.On, R.drawable.temp, 0.0));
 
         //recSensors.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
         recSensors.setLayoutManager(new GridLayoutManager(this.getContext(), 2));

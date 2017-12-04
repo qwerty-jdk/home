@@ -49,7 +49,7 @@ public class RecSensorsAdapter extends RecyclerView.Adapter<RecSensorsAdapter.Se
     public void onBindViewHolder(final SensorViewHolder holder, final int position) {
         try {
             Sensor sensor = sensors.get(position);
-            holder.txtName.setText(sensor.getName());
+            holder.txtName.setText(sensor.getUbication());
             //holder.txtType.setText(sensor.getType());
             //holder.txtStatus.setText(sensor.getStatus());
             holder.imgSensor.setImageResource(sensor.getImage());

@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.jdk.qwerty.home.Adapter.RecSensorsAdapter;
 import com.jdk.qwerty.home.Objects.Sensor;
+import com.jdk.qwerty.home.Objects.Status_Sensor;
+import com.jdk.qwerty.home.Objects.Type_Sensor;
 import com.jdk.qwerty.home.R;
 
 import java.util.ArrayList;
@@ -35,9 +37,9 @@ public class Door extends Fragment {
         //Using door_tab.xml objects with view.
         recSensors = (RecyclerView) view.findViewById(R.id.recSensors);
         ArrayList<Sensor> sensors = new ArrayList<>();
-        sensors.add(new Sensor("Hall", "Door", "OFF", R.drawable.door));
-        sensors.add(new Sensor("Living", "Door", "AUTO", R.drawable.door));
-        sensors.add(new Sensor("Kitchen", "Door", "ON", R.drawable.door));
+        sensors.add(new Sensor("Hall", Type_Sensor.Door, Status_Sensor.Off, R.drawable.door));
+        sensors.add(new Sensor("Living", Type_Sensor.Door, Status_Sensor.Auto, R.drawable.door));
+        sensors.add(new Sensor("Kitchen", Type_Sensor.Door, Status_Sensor.On, R.drawable.door));
 
         //recSensors.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
         recSensors.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
