@@ -81,13 +81,13 @@ public class Controller {
 
     //########## START LUZ
 
-    public void setLuzHabOne(float value){
-        EditSettings.putFloat(LuzHabOne, value);
+    public void setLuzHabOne(String value){
+        EditSettings.putString(LuzHabOne, value);
         EditSettings.commit();
     }
 
-    public float getLuzHabOne(){
-        return Settings.getFloat(LuzHabOne, 0);
+    public String getLuzHabOne(){
+        return Settings.getString(LuzHabOne, "none");
     }
 
     public void  setLuzHabTwo(float value){
@@ -95,62 +95,62 @@ public class Controller {
         EditSettings.commit();
     }
 
-    public float getLuzHabTwo(){
-        return Settings.getFloat(LuzHabTwo, 0);
+    public String getLuzHabTwo(){
+        return Settings.getString(LuzHabTwo, "none");
     }
 
-    public void  setLuzHabTree(float value){
-        EditSettings.putFloat(LuzHabTree, value);
+    public void  setLuzHabTree(String value){
+        EditSettings.putString(LuzHabTree, value);
         EditSettings.commit();
     }
 
-    public float getLuzHabTree(){
-        return Settings.getFloat(LuzHabTree, 0);
+    public String getLuzHabTree(){
+        return Settings.getString(LuzHabTree, "none");
     }
 
-    public void  setLuzBanOne(float value){
-        EditSettings.putFloat(LuzBanOne, value);
+    public void  setLuzBanOne(String value){
+        EditSettings.putString(LuzBanOne, value);
         EditSettings.commit();
     }
 
-    public float getLuzBanOne(){
-        return Settings.getFloat(LuzBanOne, 0);
+    public String getLuzBanOne(){
+        return Settings.getString(LuzBanOne, "none");
     }
 
-    public void  setLuzBanTwo(float value){
-        EditSettings.putFloat(LuzBanTwo, value);
+    public void  setLuzBanTwo(String value){
+        EditSettings.putString(LuzBanTwo, value);
         EditSettings.commit();
     }
 
-    public float getLuzBanTwo(){
-        return Settings.getFloat(LuzBanTwo, 0);
+    public String getLuzBanTwo(){
+        return Settings.getString(LuzBanTwo, "none");
     }
 
-    public void  setLuzCocina(float value){
-        EditSettings.putFloat(LuzCocina, value);
+    public void  setLuzCocina(String value){
+        EditSettings.putString(LuzCocina, value);
         EditSettings.commit();
     }
 
-    public float getLuzCocina(){
-        return Settings.getFloat(LuzCocina,0);
+    public String getLuzCocina(){
+        return Settings.getString(LuzCocina,"none");
     }
 
-    public void  setLuzSala(float value){
-        EditSettings.putFloat(LuzSala, value);
+    public void  setLuzSala(String value){
+        EditSettings.putString(LuzSala, value);
         EditSettings.commit();
     }
 
-    public float getLuzSala(){
-        return Settings.getFloat(LuzSala,0);
+    public String getLuzSala(){
+        return Settings.getString(LuzSala,"none");
     }
 
-    public void  setLuzEstac(float value){
-        EditSettings.putFloat(LuzEstac, value);
+    public void  setLuzEstac(String value){
+        EditSettings.putString(LuzEstac, value);
         EditSettings.commit();
     }
 
-    public float getLuzEstac(){
-        return Settings.getFloat(LuzEstac,0);
+    public String getLuzEstac(){
+        return Settings.getString(LuzEstac,"none");
     }
 
     //########## END LUZ
@@ -301,13 +301,13 @@ public class Controller {
         return Settings.getFloat(MotorAire,0);
     }
 
-    public void setMotorPuerta(float value){
-        EditSettings.putFloat(MotorPuerta, value);
+    public void setMotorEstac(String  value){
+        EditSettings.putString(MotorPuerta, value);
         EditSettings.commit();
     }
 
-    public float getMotorEstac(){
-        return Settings.getFloat(MotorPuerta,0);
+    public String getMotorEstac(){
+        return Settings.getString(MotorPuerta,"none");
     }
 
     public void setSerMotorAire(float value){

@@ -32,6 +32,9 @@ import com.jdk.qwerty.home.Objects.Type_Sensor;
 import com.jdk.qwerty.home.Objects._Light;
 import com.jdk.qwerty.home.R;
 
+import org.json.JSONObject;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -43,7 +46,6 @@ public class Light extends Fragment {
     private static final String TAG = "Light tab";
     private RecyclerView recSensors;
     private ImageView ImageButton;
-    //private Switch _Switch;
     private SeekBar _SeekBar;
     private TextView _TextView;
     private LinearLayout _Manager;
@@ -136,7 +138,17 @@ public class Light extends Fragment {
             @Override
             public void onClick(View view) {
                 //Guardar estado de sensor
-                Toast.makeText(getContext(), "Guardar estado del sensor", Toast.LENGTH_SHORT).show();
+                _Light data = getForm();
+
+                try {
+                    for(Method method: MainActivity.My_Controller.getClass().getMethods()){
+                        if(method.getName().equals("set" + recSensors.getTag().toString())){
+                            try { method.invoke(MainActivity.My_Controller, data.toJSON()); } catch (Exception ex ){}
+                            Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+                            break;
+                        }
+                    }
+                } catch (Error e) { Toast.makeText(getContext(), "Cambios no almacenados", Toast.LENGTH_SHORT).show(); }
                 Start();
             }
         });
@@ -151,23 +163,129 @@ public class Light extends Fragment {
         //Using light_tab.xml objects with view.
         recSensors = view.findViewById(R.id.recSensors);
         sensors = new ArrayList<>();
-        sensors.add(new _Light("Hall", Type_Sensor.Light, Status_Sensor.Off, R.drawable.light, Mode_Light.Medium));
-        sensors.add(new _Light("Living", Type_Sensor.Light, Status_Sensor.Auto, R.drawable.light, Mode_Light.Medium));
-        sensors.add(new _Light("Kitchen", Type_Sensor.Light, Status_Sensor.On, R.drawable.light, Mode_Light.Medium));
+        Type_Sensor defaultType = Type_Sensor.Light;
+        Status_Sensor defaultStatus = Status_Sensor.Off;
+        Mode_Light dafaultMode = Mode_Light.Low;
+        sensors.add(new _Light("Habitacion Principal", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzHabOne"));
+        sensors.add(new _Light("Habitación Niño", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzHabTwo"));
+        sensors.add(new _Light("Habitación Bebe", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzHabTree"));
+        sensors.add(new _Light("Baño público", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzBanOne"));
+        sensors.add(new _Light("Baño Privado", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzBanTwo"));
+        sensors.add(new _Light("Cocina", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzCocina"));
+        sensors.add(new _Light("Living", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzSala"));
+        sensors.add(new _Light("Estacionamiento", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzEstac"));
 
         recSensors.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
         RecSensorsAdapter adapter = new RecSensorsAdapter(view.getContext(), sensors);
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 changeShow(true);
-                setForm((_Light)sensors.get(recSensors.getChildAdapterPosition(view)));
+                _Light _default = (_Light)sensors.get(recSensors.getChildAdapterPosition(view));
+                recSensors.setTag(_default.getMethodName());
+
+                Object json = null;
+                try {
+                    for(Method method: MainActivity.My_Controller.getClass().getMethods()){
+                        if(method.getName().equals("get" + _default.getMethodName())){
+                            try {
+                               json = method.invoke(MainActivity.My_Controller);
+                            } catch (Exception ex ){}
+                            break;
+                        }
+                    }
+                } catch (Error e) { }
+
+                _Light data = null;
+                if(json != null)
+                    data = parseJsonToLight(json.toString(), _default.getMethodName());
+
+                //SI encuentra sensor almacenado lo refresca, sino coloca el por defecto
+                setForm(data != null ? data : _default);
             }
         });
         recSensors.setAdapter(adapter);
 
         this.Start();
         return view;
+    }
+
+    private _Light parseJsonToLight(String _json, String methodName){
+        try {
+            JSONObject json = new JSONObject(_json);
+
+            int image;
+            Status_Sensor status;
+            switch (json.getString("status")){
+                case "Auto":
+                    status = Status_Sensor.Auto;
+                    image = R.drawable.light_auto;
+                    break;
+                case "On":
+                    status = Status_Sensor.On;
+                    image = R.drawable.light_on;
+                    break;
+                case "Off":
+                    status = Status_Sensor.Off;
+                    image = R.drawable.light_off;
+                    break;
+                default:
+                    status = Status_Sensor.Off;
+                    image = R.drawable.light_off;
+                    break;
+            }
+
+            Mode_Light mode;
+            switch (json.getString("mode")){
+                case "High": mode = Mode_Light.High; break;
+                case "Medium": mode = Mode_Light.Medium; break;
+                case "Low": mode = Mode_Light.Low; break;
+                default: mode = Mode_Light.Medium; break;
+            }
+
+            return new _Light(json.getString("ubication"), Type_Sensor.Light, status, image, mode, methodName);
+        }catch(Exception ex){
+            return null;
+        }
+    }
+
+    private _Light getForm(){
+
+        TextView ubication = getActivity().findViewById(R.id.txtNameSensor);
+
+        ImageButton imageButton = getActivity().findViewById(R.id.ImageButton);
+        Status_Sensor status;
+        int image = 0;
+        switch (imageButton.getTag().toString()){
+            case "auto":
+                status = Status_Sensor.Auto;
+                image = R.drawable.light_auto;
+                break;
+            case "on":
+                status = Status_Sensor.On;
+                image = R.drawable.light_on;
+                break;
+            case "off":
+                status = Status_Sensor.Off;
+                image = R.drawable.light_off;
+                break;
+            default:
+                status = Status_Sensor.Off;
+                image = R.drawable.light_off;
+                break;
+        }
+
+        SeekBar seekBar = (SeekBar)getActivity().findViewById(R.id.seekBar);
+        Mode_Light mode;
+        switch (seekBar.getProgress()){
+            case 0: mode = Mode_Light.Low; break;
+            case 1: mode = Mode_Light.Medium; break;
+            case 2: mode = Mode_Light.High; break;
+            default: mode = Mode_Light.Medium; break;
+        }
+
+        return new _Light(ubication.getText().toString(), Type_Sensor.Light, status, image, mode, "");
     }
 
     private void setForm(_Light data){

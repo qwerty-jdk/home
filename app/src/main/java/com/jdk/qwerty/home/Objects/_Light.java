@@ -10,14 +10,16 @@ import org.json.JSONObject;
 public class _Light extends Sensor {
 
     private Mode_Light mode;
+    private String methodName;
 
     public _Light(){
         this.setMode(null);
     }
 
-    public _Light(String _ubication, Type_Sensor _type, Status_Sensor _status, int _image, Mode_Light _mode){
+    public _Light(String _ubication, Type_Sensor _type, Status_Sensor _status, int _image, Mode_Light _mode, String _methodName){
         super(_ubication, _type, _status, _image);
         this.setMode(_mode);
+        this.setMethodName(_methodName);
     }
 
     public Mode_Light getMode() {
@@ -26,6 +28,14 @@ public class _Light extends Sensor {
 
     public void setMode(Mode_Light mode) {
         this.mode = mode;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
     }
 
     @Override
