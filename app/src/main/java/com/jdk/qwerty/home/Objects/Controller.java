@@ -63,8 +63,8 @@ public class Controller {
 
     //TEMPERATURA
     private String TempeHabOne = "/" + casa + "/" + temperatura + "/" + habitacion + "/" + uno;
-    private String TempeHabTwo = "/" + casa + "/" + temperatura + "/" + habitacion + "/" + uno;
-    private String TempeHabTree = "/" + casa + "/" + temperatura + "/" + habitacion + "/" + uno;
+    private String TempeHabTwo = "/" + casa + "/" + temperatura + "/" + habitacion + "/" + dos;
+    private String TempeHabTree = "/" + casa + "/" + temperatura + "/" + habitacion + "/" + tres;
 
     //MOTORES
     private String MotorAire = "/" + casa + "/" + motor + "/" + uno;
@@ -90,8 +90,8 @@ public class Controller {
         return Settings.getString(LuzHabOne, "none");
     }
 
-    public void  setLuzHabTwo(float value){
-        EditSettings.putFloat(LuzHabTwo, value);
+    public void  setLuzHabTwo(String value){
+        EditSettings.putString(LuzHabTwo, value);
         EditSettings.commit();
     }
 
@@ -261,31 +261,31 @@ public class Controller {
 
     //########### START TEMPERATURA
 
-    public void setTempeHabOne(float value){
-        EditSettings.putFloat(TempeHabOne, value);
+    public void setTempeHabOne(String value){
+        EditSettings.putString(TempeHabOne, value);
         EditSettings.commit();
     }
 
-    public float getTempeHabOne(){
-        return Settings.getFloat(TempeHabOne,0);
+    public String getTempeHabOne(){
+        return Settings.getString(TempeHabOne,"none");
     }
 
-    public void  setTempeHabTwo(float value){
-        EditSettings.putFloat(TempeHabTwo, value);
+    public void  setTempeHabTwo(String value){
+        EditSettings.putString(TempeHabTwo, value);
         EditSettings.commit();
     }
 
-    public float getTempeHabTwo(){
-        return Settings.getFloat(TempeHabTwo,0);
+    public String getTempeHabTwo(){
+        return Settings.getString(TempeHabTwo,"none");
     }
 
-    public void  setTempeHabTree(float value){
-        EditSettings.putFloat(TempeHabTree, value);
+    public void  setTempeHabTree(String value){
+        EditSettings.putString(TempeHabTree, value);
         EditSettings.commit();
     }
 
-    public float getTempeHabTree(){
-        return Settings.getFloat(TempeHabTree,0);
+    public String getTempeHabTree(){
+        return Settings.getString(TempeHabTree,"none");
     }
 
     //########### END TEMPERATURA

@@ -10,14 +10,17 @@ import org.json.JSONObject;
 public class _Temp extends Sensor {
 
     private Double maxTemp;
+    private String methodName;
 
     public _Temp(){
         this.setMaxTemp(-1.0);
+        this.setMethodName("");
     }
 
-    public _Temp(String _ubication, Type_Sensor _type, Status_Sensor _status, int _image, Double _maxTemp){
+    public _Temp(String _ubication, Type_Sensor _type, Status_Sensor _status, int _image, Double _maxTemp, String _methodName){
         super(_ubication, _type, _status, _image);
         this.setMaxTemp(getMaxTemp());
+        this.setMethodName(_methodName);
     }
 
     public Double getMaxTemp() {
@@ -26,6 +29,14 @@ public class _Temp extends Sensor {
 
     public void setMaxTemp(Double maxTemp) {
         this.maxTemp = maxTemp;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
     }
 
     @Override
