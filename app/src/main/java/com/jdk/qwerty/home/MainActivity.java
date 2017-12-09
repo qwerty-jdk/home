@@ -67,9 +67,9 @@ public class MainActivity extends AppCompatActivity {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         //Here we can add another fragments in the future
         // .addFragment(Fragment fragment, String title)
-        adapter.addFragment(new Light(), "Light");
-        adapter.addFragment(new Door(), "Door");
-        adapter.addFragment(new Temp(), "Temp");
+        adapter.addFragment(new Light(), "");
+        adapter.addFragment(new Door(), "");
+        adapter.addFragment(new Temp(), "");
         //Finaly we set the adapter with the SectionsPageAdapter adapter.
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);

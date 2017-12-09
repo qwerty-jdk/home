@@ -7,27 +7,28 @@ import org.json.JSONObject;
  * Created by Administrador on 04/12/2017.
  */
 
-public class _Light extends Sensor {
+public class temp extends Sensor {
 
-    private Mode_Light mode;
+    private Double maxTemp;
     private String methodName;
 
-    public _Light(){
-        this.setMode(null);
+    public temp(){
+        this.setMaxTemp(-1.0);
+        this.setMethodName("");
     }
 
-    public _Light(String _ubication, Type_Sensor _type, Status_Sensor _status, int _image, Mode_Light _mode, String _methodName){
-        super(_ubication, _type, _status, _image);
-        this.setMode(_mode);
-        this.setMethodName(_methodName);
+    public temp(String location, typeSensor type, statusSensor status, int image, Double maxTemp, String methodName){
+        super(location, type, status, image);
+        this.setMaxTemp(getMaxTemp());
+        this.setMethodName(methodName);
     }
 
-    public Mode_Light getMode() {
-        return mode;
+    public Double getMaxTemp() {
+        return maxTemp;
     }
 
-    public void setMode(Mode_Light mode) {
-        this.mode = mode;
+    public void setMaxTemp(Double maxTemp) {
+        this.maxTemp = maxTemp;
     }
 
     public String getMethodName() {
@@ -43,7 +44,7 @@ public class _Light extends Sensor {
         try {
             JSONObject obj = super.getObjectJSON();
             if(obj != null){
-                obj.put("mode", this.getMode());
+                obj.put("max_temp", this.getMaxTemp());
                 return obj.toString();
             }
             else

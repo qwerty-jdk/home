@@ -4,12 +4,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,9 +18,9 @@ import android.widget.Toast;
 import com.jdk.qwerty.home.Adapter.RecSensorsAdapter;
 import com.jdk.qwerty.home.MainActivity;
 import com.jdk.qwerty.home.Objects.Sensor;
-import com.jdk.qwerty.home.Objects.Status_Sensor;
-import com.jdk.qwerty.home.Objects.Type_Sensor;
-import com.jdk.qwerty.home.Objects._Temp;
+import com.jdk.qwerty.home.Objects.statusSensor;
+import com.jdk.qwerty.home.Objects.typeSensor;
+import com.jdk.qwerty.home.Objects.temp;
 import com.jdk.qwerty.home.R;
 
 import org.json.JSONObject;
@@ -36,21 +34,19 @@ import java.util.ArrayList;
 
 public class Temp extends Fragment {
     private static final String TAG = "Temp tab";
-
     private RecyclerView recSensors;
-    private ImageView ImageButtonTemp;
-    private LinearLayout _ManagerTemp;
-    private RelativeLayout _BackLayoutTemp;
-    private ImageButton _fabOkTemp;
-    private ImageButton _fabCancelTemp;
+    private ImageView imageButton;
+    private LinearLayout manager;
+    private RelativeLayout backLayout;
+    private ImageButton imageButtonOk;
+    private ImageButton imageButtonCancel;
 
     private ArrayList<Sensor> sensors;
 
     private void Start(){
 
-        //Default state of ImageButton and respective tag for next id
-        ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.light_off));
-        ImageButtonTemp.setTag("off"); //off id
+        imageButton.setBackground(getResources().getDrawable(R.drawable.light_off));
+        imageButton.setTag("off");
 
         changeShow(false);
     }
@@ -58,74 +54,69 @@ public class Temp extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //Choose the Layout for my Fragment
         View view = inflater.inflate(R.layout.temp_tab, container, false);
 
-        //We indentify ids of light_tab.xml objects
-        ImageButtonTemp = (ImageButton)view.findViewById(R.id.ImageButtonTemp);
-        _ManagerTemp = view.findViewById(R.id.managerTemp);
-        _BackLayoutTemp = view.findViewById(R.id.backLayoutTemp);
-        _fabOkTemp = view.findViewById(R.id.okButtonTemp);
-        _fabCancelTemp = view.findViewById(R.id.cancelButtonTemp);
+        imageButton = (ImageButton)view.findViewById(R.id.imageButtonTemp);
+        manager = view.findViewById(R.id.managerTemp);
+        backLayout = view.findViewById(R.id.backLayoutTemp);
+        imageButtonOk = view.findViewById(R.id.okButtonTemp);
+        imageButtonCancel = view.findViewById(R.id.cancelButtonTemp);
 
-        //ImageButton Click Listener
-        ImageButtonTemp.setOnClickListener(new View.OnClickListener() {
+        imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //If tags appears to be off change to on
-                switch (ImageButtonTemp.getTag().toString()){
+                switch (imageButton.getTag().toString()){
                     case "on":
-                        ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_off));
-                        ImageButtonTemp.setTag("off");
+                        imageButton.setBackground(getResources().getDrawable(R.drawable.temp_off));
+                        imageButton.setTag("off");
                         break;
                     case "off":
-                        ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_auto)); //Agregar nuevo icono para auto
-                        ImageButtonTemp.setTag("auto");
+                        imageButton.setBackground(getResources().getDrawable(R.drawable.temp_auto));
+                        imageButton.setTag("auto");
                         break;
                     case "auto":
-                        ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_on));
-                        ImageButtonTemp.setTag("on");
+                        imageButton.setBackground(getResources().getDrawable(R.drawable.temp_on));
+                        imageButton.setTag("on");
                         break;
                 }
             }
         });
 
-        _fabOkTemp.setOnClickListener(new View.OnClickListener() {
+        imageButtonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Guardar estado de sensor
-                _Temp data = getForm();
+
+                temp data = getForm();
 
                 try {
                     for(Method method: MainActivity.My_Controller.getClass().getMethods()){
                         if(method.getName().equals("set" + recSensors.getTag().toString())){
                             try { method.invoke(MainActivity.My_Controller, data.toJSON()); } catch (Exception ex ){}
-                            Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),"Saved successfully.", Toast.LENGTH_SHORT).show();
                             break;
                         }
                     }
-                } catch (Error e) { Toast.makeText(getContext(), "Cambios no almacenados", Toast.LENGTH_SHORT).show(); }
+                } catch (Error e) { Toast.makeText(getContext(), "Ooops Wild error appears! ...", Toast.LENGTH_SHORT).show(); }
                 Start();
             }
         });
 
-        _fabCancelTemp.setOnClickListener(new View.OnClickListener() {
+        imageButtonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Start();
             }
         });
 
-        //Using temp_tab.xml objects with view.
         recSensors = (RecyclerView) view.findViewById(R.id.recSensorsTemp);
         sensors = new ArrayList<>();
-        Type_Sensor defaultType = Type_Sensor.Temp;
-        Status_Sensor defaultStatus = Status_Sensor.Off;
-        sensors.add(new _Temp("Habitación principal", defaultType, defaultStatus, R.drawable.principal, 0.0, "TempeHabOne"));
-        sensors.add(new _Temp("Habitación niños", defaultType, defaultStatus, R.drawable.secundary, 0.0, "TempeHabTwo"));
-        sensors.add(new _Temp("Habitación bebés", defaultType, defaultStatus, R.drawable.kids, 0.0, "TempeHabTree"));
+        typeSensor defaultType = typeSensor.Temp;
+        statusSensor defaultStatus = statusSensor.Off;
+        sensors.add(new temp("Habitación Matrimonial", defaultType, defaultStatus, R.drawable.principal, 0.0, "TempeHabOne"));
+        sensors.add(new temp("Habitación Niños", defaultType, defaultStatus, R.drawable.secundary, 0.0, "TempeHabTwo"));
+        sensors.add(new temp("Habitación Bebés", defaultType, defaultStatus, R.drawable.kids, 0.0, "TempeHabTree"));
 
-        //recSensors.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
         recSensors.setLayoutManager(new GridLayoutManager(this.getContext(), 1));
 
         RecSensorsAdapter adapter = new RecSensorsAdapter(view.getContext(), sensors);
@@ -133,13 +124,13 @@ public class Temp extends Fragment {
             @Override
             public void onClick(View view) {
                 changeShow(true);
-                _Temp _default = (_Temp)sensors.get(recSensors.getChildAdapterPosition(view));
-                recSensors.setTag(_default.getMethodName());
+                temp def = (temp)sensors.get(recSensors.getChildAdapterPosition(view));
+                recSensors.setTag(def.getMethodName());
 
                 Object json = null;
                 try {
                     for(Method method: MainActivity.My_Controller.getClass().getMethods()){
-                        if(method.getName().equals("get" + _default.getMethodName())){
+                        if(method.getName().equals("get" + def.getMethodName())){
                             try {
                                 json = method.invoke(MainActivity.My_Controller);
                             } catch (Exception ex ){}
@@ -148,12 +139,11 @@ public class Temp extends Fragment {
                     }
                 } catch (Error e) { }
 
-                _Temp data = null;
+                temp data = null;
                 if(json != null)
-                    data = parseJsonToTemp(json.toString(), _default.getMethodName());
+                    data = parseJsonToTemp(json.toString(), def.getMethodName());
 
-                //Si encuentra sensor almacenado lo refresca, sino coloca el por defecto
-                setForm(data != null ? data : _default);
+                setForm(data != null ? data : def);
             }
         });
         recSensors.setAdapter(adapter);
@@ -161,96 +151,93 @@ public class Temp extends Fragment {
         return view;
     }
 
-    private _Temp parseJsonToTemp(String _json, String methodName){
+    private temp parseJsonToTemp(String s, String methodName){
         try {
-            JSONObject json = new JSONObject(_json);
+            JSONObject json = new JSONObject(s);
 
             int image;
-            Status_Sensor status;
+            statusSensor status;
             switch (json.getString("status")){
                 case "Auto":
-                    status = Status_Sensor.Auto;
+                    status = statusSensor.Auto;
                     image = R.drawable.temp_auto;
                     break;
                 case "On":
-                    status = Status_Sensor.On;
+                    status = statusSensor.On;
                     image = R.drawable.temp_on;
                     break;
                 case "Off":
-                    status = Status_Sensor.Off;
+                    status = statusSensor.Off;
                     image = R.drawable.temp_off;
                     break;
                 default:
-                    status = Status_Sensor.Off;
+                    status = statusSensor.Off;
                     image = R.drawable.temp_off;
                     break;
             }
 
-            return new _Temp(json.getString("ubication"), Type_Sensor.Light, status, image, 0.0, methodName);
+            return new temp(json.getString("ubication"), typeSensor.Light, status, image, 0.0, methodName);
         }catch(Exception ex){
             return null;
         }
     }
 
-    private _Temp getForm(){
+    private temp getForm(){
 
-        TextView ubication = getActivity().findViewById(R.id.txtNameSensorTemp);
+        TextView location = getActivity().findViewById(R.id.txtNameSensorTemp);
 
-        //ImageButton imageButton = getActivity().findViewById(R.id.ImageButton);
-        Status_Sensor status;
+        statusSensor status;
         int image = 0;
-        switch (ImageButtonTemp.getTag().toString()){
+        switch (imageButton.getTag().toString()){
             case "auto":
-                status = Status_Sensor.Auto;
+                status = statusSensor.Auto;
                 image = R.drawable.temp_auto;
                 break;
             case "on":
-                status = Status_Sensor.On;
+                status = statusSensor.On;
                 image = R.drawable.temp_on;
                 break;
             case "off":
-                status = Status_Sensor.Off;
+                status = statusSensor.Off;
                 image = R.drawable.temp_off;
                 break;
             default:
-                status = Status_Sensor.Off;
+                status = statusSensor.Off;
                 image = R.drawable.temp_off;
                 break;
         }
 
-        return new _Temp(ubication.getText().toString(), Type_Sensor.Light, status, image, 0.0, "");
+        return new temp(location.getText().toString(), typeSensor.Light, status, image, 0.0, "");
     }
 
-    private void setForm(_Temp data){
+    private void setForm(temp data){
 
         ((TextView)getActivity().findViewById(R.id.txtNameSensorTemp)).setText(data.getUbication());
-        //ImageButton imageButton = getActivity().findViewById(R.id.ImageButton);
 
         switch (data.getStatus()){
             case Auto:
-                ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_auto));
-                ImageButtonTemp.setTag("auto");
+                imageButton.setBackground(getResources().getDrawable(R.drawable.temp_auto));
+                imageButton.setTag("auto");
                 break;
             case On:
-                ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_on));
-                ImageButtonTemp.setTag("on");
+                imageButton.setBackground(getResources().getDrawable(R.drawable.temp_on));
+                imageButton.setTag("on");
                 break;
             case Off:
-                ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_off));
-                ImageButtonTemp.setTag("off");
+                imageButton.setBackground(getResources().getDrawable(R.drawable.temp_off));
+                imageButton.setTag("off");
                 break;
         }
     }
 
-    //Change show between recycler item view and recycler list item view...
     private void changeShow(Boolean show){
         if (show) {
-            _ManagerTemp.setVisibility(View.VISIBLE);
-            _BackLayoutTemp.setVisibility(View.VISIBLE);
+            manager.setVisibility(View.VISIBLE);
+            backLayout.setVisibility(View.VISIBLE);
             recSensors.setVisibility(View.GONE);
         } else {
-            _ManagerTemp.setVisibility(View.GONE);
-            _BackLayoutTemp.setVisibility(View.GONE);
+            manager.setVisibility(View.GONE);
+            backLayout.setVisibility(View.GONE);
             recSensors.setVisibility(View.VISIBLE);
         }
     }

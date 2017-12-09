@@ -3,8 +3,6 @@ package com.jdk.qwerty.home.Objects;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Field;
-
 /**
  * Created by Administrador on 02/12/2017.
  */
@@ -12,22 +10,22 @@ import java.lang.reflect.Field;
 public class Sensor {
 
     private String ubication;
-    private Type_Sensor type;
-    private Status_Sensor status;
+    private typeSensor type;
+    private statusSensor status;
     private int image;
 
     public Sensor(){
         this.setUbication("");
         this.setType(null);
-        this.setStatus(Status_Sensor.Off);
+        this.setStatus(statusSensor.Off);
         this.setImage(-1);
     }
 
-    public Sensor(String _ubication, Type_Sensor _type, Status_Sensor _status, int _image){
-        this.setUbication(_ubication);
-        this.setType(_type);
-        this.setStatus(_status);
-        this.setImage(_image);
+    public Sensor(String location, typeSensor type, statusSensor status, int image){
+        this.setUbication(location);
+        this.setType(type);
+        this.setStatus(status);
+        this.setImage(image);
     }
 
     public String getUbication() {
@@ -38,19 +36,19 @@ public class Sensor {
         this.ubication = ubication;
     }
 
-    public Type_Sensor getType() {
+    public typeSensor getType() {
         return type;
     }
 
-    public void setType(Type_Sensor type) {
+    public void setType(typeSensor type) {
         this.type = type;
     }
 
-    public Status_Sensor getStatus() {
+    public statusSensor getStatus() {
         return status;
     }
 
-    public void setStatus(Status_Sensor status) {
+    public void setStatus(statusSensor status) {
         this.status = status;
     }
 
