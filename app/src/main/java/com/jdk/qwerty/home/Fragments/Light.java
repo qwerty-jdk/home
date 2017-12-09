@@ -96,7 +96,7 @@ public class Light extends Fragment {
                         _TextView.setVisibility(View.GONE);
                         break;
                     case "off":
-                        ImageButton.setBackground(getResources().getDrawable(R.drawable.light_auto)); //Agregar nuevo icono para auto
+                        ImageButton.setBackground(getResources().getDrawable(R.drawable.light_auto_2)); //Agregar nuevo icono para auto
                         ImageButton.setTag("auto");
                         _SeekBar.setVisibility(View.VISIBLE);
                         _TextView.setVisibility(View.VISIBLE);
@@ -166,14 +166,14 @@ public class Light extends Fragment {
         Type_Sensor defaultType = Type_Sensor.Light;
         Status_Sensor defaultStatus = Status_Sensor.Off;
         Mode_Light dafaultMode = Mode_Light.Low;
-        sensors.add(new _Light("Habitacion Principal", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzHabOne"));
-        sensors.add(new _Light("Habitación Niño", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzHabTwo"));
-        sensors.add(new _Light("Habitación Bebe", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzHabTree"));
-        sensors.add(new _Light("Baño público", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzBanOne"));
-        sensors.add(new _Light("Baño Privado", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzBanTwo"));
-        sensors.add(new _Light("Cocina", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzCocina"));
-        sensors.add(new _Light("Living", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzSala"));
-        sensors.add(new _Light("Estacionamiento", defaultType, defaultStatus, R.drawable.light, dafaultMode, "LuzEstac"));
+        sensors.add(new _Light("Habitacion Principal", defaultType, defaultStatus, R.drawable.principal, dafaultMode, "LuzHabOne"));
+        sensors.add(new _Light("Habitación Niño", defaultType, defaultStatus, R.drawable.secundary, dafaultMode, "LuzHabTwo"));
+        sensors.add(new _Light("Habitación Bebe", defaultType, defaultStatus, R.drawable.kids, dafaultMode, "LuzHabTree"));
+        sensors.add(new _Light("Baño público", defaultType, defaultStatus, R.drawable.bpublic, dafaultMode, "LuzBanOne"));
+        sensors.add(new _Light("Baño Privado", defaultType, defaultStatus, R.drawable.bprivate, dafaultMode, "LuzBanTwo"));
+        sensors.add(new _Light("Cocina", defaultType, defaultStatus, R.drawable.kitchen, dafaultMode, "LuzCocina"));
+        sensors.add(new _Light("Living", defaultType, defaultStatus, R.drawable.living, dafaultMode, "LuzSala"));
+        sensors.add(new _Light("Estacionamiento", defaultType, defaultStatus, R.drawable.garage, dafaultMode, "LuzEstac"));
 
         recSensors.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
         RecSensorsAdapter adapter = new RecSensorsAdapter(view.getContext(), sensors);
@@ -220,7 +220,7 @@ public class Light extends Fragment {
             switch (json.getString("status")){
                 case "Auto":
                     status = Status_Sensor.Auto;
-                    image = R.drawable.light_auto;
+                    image = R.drawable.light_auto_2;
                     break;
                 case "On":
                     status = Status_Sensor.On;
@@ -260,7 +260,7 @@ public class Light extends Fragment {
         switch (imageButton.getTag().toString()){
             case "auto":
                 status = Status_Sensor.Auto;
-                image = R.drawable.light_auto;
+                image = R.drawable.light_auto_2;
                 break;
             case "on":
                 status = Status_Sensor.On;
@@ -297,21 +297,24 @@ public class Light extends Fragment {
 
         switch (data.getStatus()){
             case Auto:
-                imageButton.setBackground(getResources().getDrawable(R.drawable.light_auto));
+                imageButton.setBackground(getResources().getDrawable(R.drawable.light_auto_2));
                 imageButton.setTag("auto");
                 seekBar.setVisibility(View.VISIBLE);
                 txtSeekBarDescription.setVisibility(View.VISIBLE);
                 switch (data.getMode()){
                     case Low:
                         seekBar.setProgress(0);
+                        //imageButton.setBackground(getResources().getDrawable(R.drawable.light_auto_1));
                         txtSeekBarDescription.setText("BAJO");
                         break;
                     case Medium:
                         seekBar.setProgress(1);
+                      //  imageButton.setBackground(getResources().getDrawable(R.drawable.light_auto_2));
                         txtSeekBarDescription.setText("MEDIO");
                         break;
                     case High:
                         seekBar.setProgress(2);
+                    //    imageButton.setBackground(getResources().getDrawable(R.drawable.light_auto_3));
                         txtSeekBarDescription.setText("ALTO");
                         break;
                 }

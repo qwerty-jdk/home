@@ -75,15 +75,15 @@ public class Temp extends Fragment {
                 //If tags appears to be off change to on
                 switch (ImageButtonTemp.getTag().toString()){
                     case "on":
-                        ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.light_off));
+                        ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_off));
                         ImageButtonTemp.setTag("off");
                         break;
                     case "off":
-                        ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.light_auto)); //Agregar nuevo icono para auto
+                        ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_auto)); //Agregar nuevo icono para auto
                         ImageButtonTemp.setTag("auto");
                         break;
                     case "auto":
-                        ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.light_on));
+                        ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_on));
                         ImageButtonTemp.setTag("on");
                         break;
                 }
@@ -121,9 +121,9 @@ public class Temp extends Fragment {
         sensors = new ArrayList<>();
         Type_Sensor defaultType = Type_Sensor.Temp;
         Status_Sensor defaultStatus = Status_Sensor.Off;
-        sensors.add(new _Temp("Hall", defaultType, defaultStatus, R.drawable.temp, 0.0, "TempeHabOne"));
-        sensors.add(new _Temp("Living", defaultType, defaultStatus, R.drawable.temp, 0.0, "TempeHabTwo"));
-        sensors.add(new _Temp("Kitchen", defaultType, defaultStatus, R.drawable.temp, 0.0, "TempeHabTree"));
+        sensors.add(new _Temp("Habitación principal", defaultType, defaultStatus, R.drawable.principal, 0.0, "TempeHabOne"));
+        sensors.add(new _Temp("Habitación niños", defaultType, defaultStatus, R.drawable.secundary, 0.0, "TempeHabTwo"));
+        sensors.add(new _Temp("Habitación bebés", defaultType, defaultStatus, R.drawable.kids, 0.0, "TempeHabTree"));
 
         //recSensors.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
         recSensors.setLayoutManager(new GridLayoutManager(this.getContext(), 1));
@@ -170,19 +170,19 @@ public class Temp extends Fragment {
             switch (json.getString("status")){
                 case "Auto":
                     status = Status_Sensor.Auto;
-                    image = R.drawable.light_auto;
+                    image = R.drawable.temp_auto;
                     break;
                 case "On":
                     status = Status_Sensor.On;
-                    image = R.drawable.light_on;
+                    image = R.drawable.temp_on;
                     break;
                 case "Off":
                     status = Status_Sensor.Off;
-                    image = R.drawable.light_off;
+                    image = R.drawable.temp_off;
                     break;
                 default:
                     status = Status_Sensor.Off;
-                    image = R.drawable.light_off;
+                    image = R.drawable.temp_off;
                     break;
             }
 
@@ -202,19 +202,19 @@ public class Temp extends Fragment {
         switch (ImageButtonTemp.getTag().toString()){
             case "auto":
                 status = Status_Sensor.Auto;
-                image = R.drawable.light_auto;
+                image = R.drawable.temp_auto;
                 break;
             case "on":
                 status = Status_Sensor.On;
-                image = R.drawable.light_on;
+                image = R.drawable.temp_on;
                 break;
             case "off":
                 status = Status_Sensor.Off;
-                image = R.drawable.light_off;
+                image = R.drawable.temp_off;
                 break;
             default:
                 status = Status_Sensor.Off;
-                image = R.drawable.light_off;
+                image = R.drawable.temp_off;
                 break;
         }
 
@@ -228,15 +228,15 @@ public class Temp extends Fragment {
 
         switch (data.getStatus()){
             case Auto:
-                ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.light_auto));
+                ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_auto));
                 ImageButtonTemp.setTag("auto");
                 break;
             case On:
-                ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.light_on));
+                ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_on));
                 ImageButtonTemp.setTag("on");
                 break;
             case Off:
-                ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.light_off));
+                ImageButtonTemp.setBackground(getResources().getDrawable(R.drawable.temp_off));
                 ImageButtonTemp.setTag("off");
                 break;
         }

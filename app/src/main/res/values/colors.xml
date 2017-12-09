@@ -1,8 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- COLORS NUMBER REFERENCE: https://material.io/guidelines/style/color.html -->
+ <!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-    <!-- @0xb4dc0d3 800, 900, A200 -->
-    <color name="colorPrimary">#6A1B9A</color>
-    <color name="colorPrimaryDark">#4A148C</color>
-    <color name="colorAccent">#E040FB</color>
+<color name="primaryColor">#9b26af</color>
+<color name="primaryLightColor">#cf5ce2</color>
+<color name="primaryDarkColor">#69007f</color>
+<color name="secondaryColor">#68efad</color>
+<color name="secondaryLightColor">#9effdf</color>
+<color name="secondaryDarkColor">#29bc7d</color>
+<color name="primaryTextColor">#ffffff</color>
+<color name="secondaryTextColor">#000000</color>
 </resources>

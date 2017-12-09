@@ -13,9 +13,10 @@
         />
 
     <TextView
-        android:background="@color/colorPrimary"
+        android:background="@color/primaryLightColor"
         android:layout_width="@dimen/sensor_border_width"
-        android:layout_height="@dimen/sensor_border_height" />
+        android:layout_height="@dimen/sensor_border_height"
+        android:textColor="@color/primaryTextColor"/>
 
     <TextView
         android:id="@+id/txtName"

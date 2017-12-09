@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -31,15 +32,41 @@ import java.util.ArrayList;
 
 public class Door extends Fragment {
 
+
     private static final String TAG = "Door tab";
     private RecyclerView recSensors;
     private ArrayList<Sensor> sensors;
+   // private ImageView ImageButtonDoor;
+
+    /*private void Start(){
+        //Default state of ImageButton and respective tag for next id
+        ImageButtonDoor.setBackground(getResources().getDrawable(R.drawable.door_off));
+        ImageButtonDoor.setTag("off"); //off id
+    }*/
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Choose the Layout for my Fragment
         View view = inflater.inflate(R.layout.door_tab, container, false);
+
+        //ImageButtonDoor = (ImageButton) view.findViewById(R.id.ImageButtonDoor);
+        /*
+        ImageButtonDoor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (ImageButtonDoor.getTag().toString()){
+                    case "on":
+                        ImageButtonDoor.setBackground(getResources().getDrawable(R.drawable.door_off));
+                        ImageButtonDoor.setTag("off");
+                        break;
+                    case "off":
+                        ImageButtonDoor.setBackground(getResources().getDrawable(R.drawable.door_on));
+                        ImageButtonDoor.setTag("on");
+                        break;
+                }
+            }
+        }); */
 
         //Using door_tab.xml objects with view.
         recSensors = (RecyclerView) view.findViewById(R.id.recSensors);
@@ -55,13 +82,13 @@ public class Door extends Fragment {
                 case "Off": status = Status_Sensor.Off; break;
                 default: status = Status_Sensor.Off; break;
             }
-            door = new Sensor(json.getString("ubication"), Type_Sensor.Door,  status, R.drawable.door);
+            door = new Sensor(json.getString("ubication"), Type_Sensor.Door,  status, R.drawable.door_off);
         }catch (JSONException e) {}
 
         if(door != null)
             sensors.add(door);
         else
-            sensors.add(new Sensor("PORTÓN", Type_Sensor.Door, Status_Sensor.Off, R.drawable.door));
+            sensors.add(new Sensor("PORTÓN", Type_Sensor.Door, Status_Sensor.Off, R.drawable.door_off));
 
         recSensors.setLayoutManager(new GridLayoutManager(this.getContext(), 1));
         RecSensorsAdapter adapter = new RecSensorsAdapter(view.getContext(), sensors);
@@ -82,6 +109,7 @@ public class Door extends Fragment {
             }
         });
         recSensors.setAdapter(adapter);
+      //  this.Start();
 
         return view;
     }
