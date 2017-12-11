@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.jdk.qwerty.home.Objects.Sensor;
+import com.jdk.qwerty.home.Objects.door;
 import com.jdk.qwerty.home.R;
 
 import java.util.ArrayList;
@@ -20,12 +20,12 @@ import java.util.ArrayList;
 
 public class RecSensorsAdapter extends RecyclerView.Adapter<RecSensorsAdapter.SensorViewHolder> implements View.OnClickListener {
 
-    private final ArrayList<Sensor> sensors;
+    private final ArrayList<door> doors;
     private View.OnClickListener listenerOnClick;
 
-    public RecSensorsAdapter(Context context, ArrayList<Sensor> sensors){
+    public RecSensorsAdapter(Context context, ArrayList<door> doors){
         Context context1 = context;
-        this.sensors = sensors;
+        this.doors = doors;
     }
 
     @Override
@@ -39,9 +39,9 @@ public class RecSensorsAdapter extends RecyclerView.Adapter<RecSensorsAdapter.Se
     @Override
     public void onBindViewHolder(final SensorViewHolder holder, final int position) {
         try {
-            Sensor sensor = sensors.get(position);
-            holder.txtName.setText(sensor.getUbication());
-            holder.imgSensor.setImageResource(sensor.getImage());
+            door door = doors.get(position);
+            holder.txtName.setText(door.getDisplayName());
+            holder.imgSensor.setImageResource(door.getImage());
         }catch(Exception ex){
             System.out.println("KLG-Error en " + this.getClass().toString() + ".onBindViewHolder(): " + ex.getMessage());
         }
@@ -49,7 +49,7 @@ public class RecSensorsAdapter extends RecyclerView.Adapter<RecSensorsAdapter.Se
 
     @Override
     public int getItemCount() {
-        return sensors.size();
+        return doors.size();
     }
 
     public void setOnClickListener(View.OnClickListener _listenerOnClick){

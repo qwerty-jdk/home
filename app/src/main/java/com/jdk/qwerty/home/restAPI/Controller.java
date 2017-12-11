@@ -1,9 +1,19 @@
-package com.jdk.qwerty.home.Objects;
+package com.jdk.qwerty.home.restAPI;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.view.View;
+
+import com.jdk.qwerty.home.Objects.door;
+import com.jdk.qwerty.home.Objects.light;
+import com.jdk.qwerty.home.Objects.temp;
+import com.jdk.qwerty.home.Objects.user;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Administrador on 03/12/2017.
@@ -13,6 +23,8 @@ public class Controller {
 
     public static SharedPreferences Settings;
     public static SharedPreferences.Editor EditSettings;
+    private Retrofit retrofit;
+    private RestClient restClient;
 
     //Sensores
     private final String led = "light";
@@ -74,12 +86,64 @@ public class Controller {
     //############### END ÁREAS
 
     public Controller(SharedPreferences sharedPreferences){
+
         Settings = sharedPreferences;
         EditSettings = Settings.edit();
 
+        retrofit = new Retrofit.Builder()
+                .baseUrl(RestClient.BASE_URL)//"https://api-rest-mqtt.herokuapp.com"
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        restClient = retrofit.create(RestClient.class);
+
     }
 
+    //########## START USER
+
+    public void signUp(user _user, Callback<user> callback){
+        Call<user> call = this.restClient.signUp(_user);
+        call.enqueue(callback);
+    }
+
+    private Boolean isSignIn;
+    public void signIn(user _user, Callback<user> callback){
+        Call<user> call = this.restClient.signIn(_user);
+        call.enqueue(callback);
+    }
+
+    public void setToken(String value){
+        EditSettings.putString("token", value);
+        EditSettings.commit();
+    }
+
+    private String getToken(){
+        return "Bearer " + "code";
+        //return "Bearer " + Settings.getString("token", "none");
+    }
+
+    //########## END USER
+
     //########## START LUZ
+
+    public void getLightAll(Callback<List<light>> callback){
+        Call<List<light>> call = this.restClient.getLights(this.getToken());
+        call.enqueue(callback);
+    }
+
+    public void setLight(light data, Callback<light> callback){
+        Call<light> call = this.restClient.setLight(this.getToken(), data);
+        call.enqueue(callback);
+    }
+
+    public void getTempAll(Callback<List<temp>> callback){
+        Call<List<temp>> call = this.restClient.getTemps(this.getToken());
+        call.enqueue(callback);
+    }
+
+    public void setTemp(temp data, Callback<temp> callback){
+        Call<temp> call = this.restClient.setTemp(this.getToken(), data);
+        call.enqueue(callback);
+    }
 
     public void setLuzHabOne(String value){
         EditSettings.putString(LuzHabOne, value);
@@ -301,13 +365,15 @@ public class Controller {
         return Settings.getFloat(MotorAire,0);
     }
 
-    public void setMotorEstac(String  value){
-        EditSettings.putString(MotorPuerta, value);
-        EditSettings.commit();
+    public void setMotorEstac(door data, Callback<door> callback){
+        data.setLocation(MotorPuerta);
+        Call<door> call = this.restClient.setDoor(this.getToken(), data);
+        call.enqueue(callback);
     }
 
-    public String getMotorEstac(){
-        return Settings.getString(MotorPuerta,"none");
+    public void getMotorEstac(Callback<door> callback){
+        Call<door> call = this.restClient.getDoor(this.getToken(), MotorPuerta);
+        call.enqueue(callback);
     }
 
     public void setSerMotorAire(float value){

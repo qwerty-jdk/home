@@ -7,48 +7,42 @@ import org.json.JSONObject;
  * Created by Administrador on 02/12/2017.
  */
 
-public class Sensor {
+public class door {
 
-    private String ubication;
-    private typeSensor type;
-    private statusSensor status;
+    private String _id;
+    private String location;
+    private String displayName;
+    private String status;
     private int image;
 
-    public Sensor(){
-        this.setUbication("");
-        this.setType(null);
-        this.setStatus(statusSensor.Off);
-        this.setImage(-1);
-    }
-
-    public Sensor(String location, typeSensor type, statusSensor status, int image){
-        this.setUbication(location);
-        this.setType(type);
+    public door(String location, String displayName, String status, int image){
+        this.setLocation(location);
+        this.setDisplayName(displayName);
         this.setStatus(status);
         this.setImage(image);
     }
 
-    public String getUbication() {
-        return ubication;
+    public String getLocation() {
+        return location;
     }
 
-    public void setUbication(String ubication) {
-        this.ubication = ubication;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
-    public typeSensor getType() {
-        return type;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setType(typeSensor type) {
-        this.type = type;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
-    public statusSensor getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(statusSensor status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -63,8 +57,8 @@ public class Sensor {
     protected JSONObject getObjectJSON(){
         try {
             JSONObject obj = new JSONObject();
-            obj.put("ubication", this.getUbication());
-            obj.put("type", this.getType());
+            obj.put("location", this.getLocation());
+            obj.put("displayName", this.getDisplayName());
             obj.put("status", this.getStatus());
             obj.put("image", this.getImage());
             return obj;

@@ -7,35 +7,21 @@ import org.json.JSONObject;
  * Created by Administrador on 04/12/2017.
  */
 
-public class light extends Sensor {
+public class light extends door {
 
-    private modeLight mode;
-    private String methodName;
+    private String mode;
 
-    public light(){
-        this.setMode(null);
-    }
-
-    public light(String location, typeSensor type, statusSensor status, int image, modeLight mode, String methodName){
-        super(location, type, status, image);
+    public light(String location, String displayName, String status, int image, String mode){
+        super(location, displayName, status, image);
         this.setMode(mode);
-        this.setMethodName(methodName);
     }
 
-    public modeLight getMode() {
+    public String getMode() {
         return mode;
     }
 
-    public void setMode(modeLight mode) {
+    public void setMode(String mode) {
         this.mode = mode;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
     }
 
     @Override

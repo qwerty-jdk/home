@@ -7,36 +7,21 @@ import org.json.JSONObject;
  * Created by Administrador on 04/12/2017.
  */
 
-public class temp extends Sensor {
+public class temp extends door {
 
-    private Double maxTemp;
-    private String methodName;
+    private Integer maxTemp;
 
-    public temp(){
-        this.setMaxTemp(-1.0);
-        this.setMethodName("");
+    public temp(String location, String displayName, String status, Integer image, Integer maxTemp){
+        super(location, displayName, status, image);
+        this.setMaxTemp(maxTemp);
     }
 
-    public temp(String location, typeSensor type, statusSensor status, int image, Double maxTemp, String methodName){
-        super(location, type, status, image);
-        this.setMaxTemp(getMaxTemp());
-        this.setMethodName(methodName);
-    }
-
-    public Double getMaxTemp() {
+    public Integer getMaxTemp() {
         return maxTemp;
     }
 
-    public void setMaxTemp(Double maxTemp) {
+    public void setMaxTemp(Integer maxTemp) {
         this.maxTemp = maxTemp;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
     }
 
     @Override

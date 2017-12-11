@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +16,16 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.jdk.qwerty.home.Adapter.RecSensorsAdapter;
 import com.jdk.qwerty.home.MainActivity;
-import com.jdk.qwerty.home.Objects.modeLight;
-import com.jdk.qwerty.home.Objects.Sensor;
-import com.jdk.qwerty.home.Objects.statusSensor;
-import com.jdk.qwerty.home.Objects.typeSensor;
+import com.jdk.qwerty.home.Objects.door;
 import com.jdk.qwerty.home.Objects.light;
 import com.jdk.qwerty.home.R;
-
-import org.json.JSONObject;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Administrador on 02/12/2017.
@@ -45,8 +42,41 @@ public class Light extends Fragment {
     private RelativeLayout backlayout;
     private ImageButton imageButtonOk;
     private ImageButton imageButtonCancel;
+    private ArrayList<door> lights;
+    private View view;
+    private light currentLight;
+    private int currentIndex;
 
-    private ArrayList<Sensor> sensors;
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //Choose the Layout for my Fragment
+        view = inflater.inflate(R.layout.light_tab, container, false);
+
+        //We indentify ids of light_tab.xml objects
+        imageButton = (ImageButton)view.findViewById(R.id.imageButtonLight); //Representación de light
+        manager = view.findViewById(R.id.managerLight); //Contenedor para modificar estado de light seleccionado
+        backlayout = view.findViewById(R.id.backLayoutLight); //Contenedor de identificador y acciones [btnOK, txtName, btnCancel]
+        seekBar = view.findViewById(R.id.seekBarLight); //Control para cambiar modo de light [low, medium, high]
+        textView = view.findViewById(R.id.txtDescriptionLight); //Texto que identifica light seleccionado
+        imageButtonOk = view.findViewById(R.id.okButtonLight); //Botón para caeptar cambio de light seleccionado
+        imageButtonCancel = view.findViewById(R.id.cancelButtonLight); //Botón para cancelar cambios de light seleccionado
+
+        //Events Listeners
+        imageButton.setOnClickListener(this.imageButtonOnClick()); //Cambia estados de light [on, off, auto]
+        seekBar.setOnSeekBarChangeListener(this.seekBarOnChange()); //Define intensidad de light [low, medium, high]
+        imageButtonOk.setOnClickListener(this.imageButtonOkOnClick()); //Acepta cambios realizados en light seleccionado
+        imageButtonCancel.setOnClickListener(this.imageButtonCancelOnClick()); //Cancela cambios realizados en light seleccionado
+
+        //Using light_tab.xml objects with view.
+        recSensors = view.findViewById(R.id.recSensorsLight); //Contenedor lista de lights
+        //Build RecyclerView with adapter
+        recSensors.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
+
+        MainActivity.My_Controller.getLightAll(this.CallBackGet());
+        this.Start();
+        return view;
+    }
 
     private void Start(){
 
@@ -58,26 +88,89 @@ public class Light extends Fragment {
         seekBar.setVisibility(View.GONE);
         textView.setVisibility(View.GONE);
 
+        currentLight = null;
+        currentIndex = 0;
+
         changeShow(false);
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //Choose the Layout for my Fragment
-        View view = inflater.inflate(R.layout.light_tab, container, false);
+    private light getForm(){
+        TextView location = getActivity().findViewById(R.id.txtNameSensorLight);
+        ImageButton imageButton = getActivity().findViewById(R.id.imageButtonLight);
+        String status = imageButton.getTag().toString();
 
-        //We indentify ids of light_tab.xml objects
-        imageButton = (ImageButton)view.findViewById(R.id.imageButtonLight);
-        manager = view.findViewById(R.id.managerLight);
-        backlayout = view.findViewById(R.id.backLayoutLight);
-        seekBar = view.findViewById(R.id.seekBarLight);
-        textView = view.findViewById(R.id.txtDescriptionLight);
-        imageButtonOk = view.findViewById(R.id.okButtonLight);
-        imageButtonCancel = view.findViewById(R.id.cancelButtonLight);
+        SeekBar seekBar = (SeekBar)getActivity().findViewById(R.id.seekBarLight);
+        String mode;
+        switch (seekBar.getProgress()){
+            case 0: mode = "low"; break;
+            case 1: mode = "medium"; break;
+            case 2: mode = "high"; break;
+            default: mode = "medium"; break;
+        }
 
-        //imageButton Click Listener
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        light lightDefault = currentLight;
+        return new light(lightDefault.getLocation(), location.getText().toString(), status, lightDefault.getImage(), mode);
+    }
+
+    private void setForm(light data){
+
+        ((TextView)getActivity().findViewById(R.id.txtNameSensorLight)).setText(data.getDisplayName());
+        ImageButton imageButton = getActivity().findViewById(R.id.imageButtonLight);
+        TextView txtSeekBarDescription = getActivity().findViewById(R.id.txtDescriptionLight);
+        SeekBar seekBar = (SeekBar)getActivity().findViewById(R.id.seekBarLight);
+
+        switch (data.getStatus()){
+            case "auto":
+                imageButton.setBackground(getResources().getDrawable(R.drawable.light_auto_2));
+                imageButton.setTag("auto");
+                seekBar.setVisibility(View.VISIBLE);
+                txtSeekBarDescription.setVisibility(View.VISIBLE);
+                switch (data.getMode()){
+                    case "low":
+                        seekBar.setProgress(0);
+                        txtSeekBarDescription.setText("BAJO");
+                        break;
+                    case "medium":
+                        seekBar.setProgress(1);
+                        txtSeekBarDescription.setText("MEDIO");
+                        break;
+                    case "high":
+                        seekBar.setProgress(2);
+                        txtSeekBarDescription.setText("ALTO");
+                        break;
+                }
+                break;
+            case "on":
+                seekBar.setVisibility(View.GONE);
+                txtSeekBarDescription.setVisibility(View.GONE);
+                imageButton.setBackground(getResources().getDrawable(R.drawable.light_on));
+                imageButton.setTag("on");
+                break;
+            case "off":
+                seekBar.setVisibility(View.GONE);
+                txtSeekBarDescription.setVisibility(View.GONE);
+                imageButton.setBackground(getResources().getDrawable(R.drawable.light_off));
+                imageButton.setTag("off");
+                break;
+        }
+
+    }
+
+    private void changeShow(Boolean show){
+        if (show) {
+            manager.setVisibility(View.VISIBLE);
+            backlayout.setVisibility(View.VISIBLE);
+            recSensors.setVisibility(View.GONE);
+        } else {
+            manager.setVisibility(View.GONE);
+            backlayout.setVisibility(View.GONE);
+            recSensors.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /*########### START EVENTS LISTENERS ###########*/
+    private View.OnClickListener imageButtonOnClick(){
+        return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //If tags appears to be off change to on
@@ -103,9 +196,11 @@ public class Light extends Fragment {
                         break;
                 }
             }
-        });
+        };
+    }
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+    private SeekBar.OnSeekBarChangeListener seekBarOnChange(){
+        return new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 switch (progress){
@@ -125,214 +220,104 @@ public class Light extends Fragment {
 
             }
 
-        });
+        };
+    }
 
-        imageButtonOk.setOnClickListener(new View.OnClickListener() {
+    private View.OnClickListener imageButtonOkOnClick(){
+        return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 light data = getForm();
-
-                try {
-                    for(Method method: MainActivity.My_Controller.getClass().getMethods()){
-                        if(method.getName().equals("set" + recSensors.getTag().toString())){
-                            try { method.invoke(MainActivity.My_Controller, data.toJSON()); } catch (Exception ex ){}
-                            Toast.makeText(getContext(), "Saved successfully.", Toast.LENGTH_SHORT).show();
-                            break;
-                        }
-                    }
-                } catch (Error e) { Toast.makeText(getContext(), "Ooops Wild error appears! ...", Toast.LENGTH_SHORT).show(); }
+                MainActivity.My_Controller.setLight(data, CallBackSet());
+                lights.set(currentIndex, data);
+                recSensors.getAdapter().notifyDataSetChanged();
                 Start();
             }
-        });
+        };
+    }
 
-        imageButtonCancel.setOnClickListener(new View.OnClickListener() {
+    private View.OnClickListener imageButtonCancelOnClick(){
+        return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Start();
             }
-        });
+        };
+    }
 
-        //Using light_tab.xml objects with view.
-        recSensors = view.findViewById(R.id.recSensorsLight);
-        sensors = new ArrayList<>();
-        typeSensor defaultType = typeSensor.Light;
-        statusSensor defaultStatus = statusSensor.Off;
-        modeLight defaultMode = modeLight.Low;
-        sensors.add(new light("Habitación Matrimonial", defaultType, defaultStatus, R.drawable.principal, defaultMode, "LuzHabOne"));
-        sensors.add(new light("Habitación Niños", defaultType, defaultStatus, R.drawable.secundary, defaultMode, "LuzHabTwo"));
-        sensors.add(new light("Habitación Bebés", defaultType, defaultStatus, R.drawable.kids, defaultMode, "LuzHabTree"));
-        sensors.add(new light("Baño público", defaultType, defaultStatus, R.drawable.bpublic, defaultMode, "LuzBanOne"));
-        sensors.add(new light("Baño Privado", defaultType, defaultStatus, R.drawable.bprivate, defaultMode, "LuzBanTwo"));
-        sensors.add(new light("Cocina", defaultType, defaultStatus, R.drawable.kitchen, defaultMode, "LuzCocina"));
-        sensors.add(new light("Living", defaultType, defaultStatus, R.drawable.living, defaultMode, "LuzSala"));
-        sensors.add(new light("Estacionamiento", defaultType, defaultStatus, R.drawable.garage, defaultMode, "LuzEstac"));
-
-        recSensors.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
-        RecSensorsAdapter adapter = new RecSensorsAdapter(view.getContext(), sensors);
-        adapter.setOnClickListener(new View.OnClickListener() {
+    private View.OnClickListener adapterOnItemClick(){
+        return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 changeShow(true);
-                //def == default
-                light def = (light)sensors.get(recSensors.getChildAdapterPosition(view));
-                recSensors.setTag(def.getMethodName());
+                currentIndex = recSensors.getChildAdapterPosition(view);
+                currentLight = (light) lights.get(currentIndex);
+                setForm(currentLight);
 
-                Object json = null;
-                try {
-                    for(Method method: MainActivity.My_Controller.getClass().getMethods()){
-                        if(method.getName().equals("get" + def.getMethodName())){
-                            try {
-                               json = method.invoke(MainActivity.My_Controller);
-                            } catch (Exception ex ){}
-                            break;
-                        }
-                    }
-                } catch (Error e) { }
-
-                light data = null;
-                if(json != null)
-                    data = parseJsonToLight(json.toString(), def.getMethodName());
-
-                setForm(data != null ? data : def);
             }
-        });
-        recSensors.setAdapter(adapter);
-
-        this.Start();
-        return view;
+        };
     }
+    /*########### END EVENTS LISTENERS ###########*/
 
-    private light parseJsonToLight(String s, String methodName){
-        try {
-            JSONObject json = new JSONObject(s);
+    /*########### START CALLBACK LISTENERS ###########*/
+    private Callback<List<light>> CallBackGet() {
+        return new Callback<List<light>>() {
+            @Override
+            public void onResponse(Call<List<light>> call, Response<List<light>> response) {
 
-            int image;
-            statusSensor status;
-            switch (json.getString("status")){
-                case "Auto":
-                    status = statusSensor.Auto;
-                    image = R.drawable.light_auto_2;
-                    break;
-                case "On":
-                    status = statusSensor.On;
-                    image = R.drawable.light_on;
-                    break;
-                case "Off":
-                    status = statusSensor.Off;
-                    image = R.drawable.light_off;
-                    break;
-                default:
-                    status = statusSensor.Off;
-                    image = R.drawable.light_off;
-                    break;
-            }
-
-            modeLight mode;
-            switch (json.getString("mode")){
-                case "High": mode = modeLight.High; break;
-                case "Medium": mode = modeLight.Medium; break;
-                case "Low": mode = modeLight.Low; break;
-                default: mode = modeLight.Medium; break;
-            }
-
-            return new light(json.getString("ubication"), typeSensor.Light, status, image, mode, methodName);
-        }catch(Exception ex){
-            return null;
-        }
-    }
-
-    private light getForm(){
-        TextView location = getActivity().findViewById(R.id.txtNameSensorLight);
-        ImageButton imageButton = getActivity().findViewById(R.id.imageButtonLight);
-        statusSensor status;
-        int image = 0;
-        switch (imageButton.getTag().toString()){
-            case "auto":
-                status = statusSensor.Auto;
-                image = R.drawable.light_auto_2;
-                break;
-            case "on":
-                status = statusSensor.On;
-                image = R.drawable.light_on;
-                break;
-            case "off":
-                status = statusSensor.Off;
-                image = R.drawable.light_off;
-                break;
-            default:
-                status = statusSensor.Off;
-                image = R.drawable.light_off;
-                break;
-        }
-
-        SeekBar seekBar = (SeekBar)getActivity().findViewById(R.id.seekBarLight);
-        modeLight mode;
-        switch (seekBar.getProgress()){
-            case 0: mode = modeLight.Low; break;
-            case 1: mode = modeLight.Medium; break;
-            case 2: mode = modeLight.High; break;
-            default: mode = modeLight.Medium; break;
-        }
-
-        return new light(location.getText().toString(), typeSensor.Light, status, image, mode, "");
-    }
-
-    private void setForm(light data){
-
-        ((TextView)getActivity().findViewById(R.id.txtNameSensorLight)).setText(data.getUbication());
-        ImageButton imageButton = getActivity().findViewById(R.id.imageButtonLight);
-        TextView txtSeekBarDescription = getActivity().findViewById(R.id.txtDescriptionLight);
-        SeekBar seekBar = (SeekBar)getActivity().findViewById(R.id.seekBarLight);
-
-        switch (data.getStatus()){
-            case Auto:
-                imageButton.setBackground(getResources().getDrawable(R.drawable.light_auto_2));
-                imageButton.setTag("auto");
-                seekBar.setVisibility(View.VISIBLE);
-                txtSeekBarDescription.setVisibility(View.VISIBLE);
-                switch (data.getMode()){
-                    case Low:
-                        seekBar.setProgress(0);
-                        txtSeekBarDescription.setText("BAJO");
+                lights = new ArrayList<>();
+                switch(response.code()){
+                    case 200:
+                        for(light data: response.body())
+                            lights.add(data);
                         break;
-                    case Medium:
-                        seekBar.setProgress(1);
-                        txtSeekBarDescription.setText("MEDIO");
+                    case 401:
+                        lights.add(new light("", "Habitación Matrimonial", "off", R.drawable.principal, "low"));
+                        lights.add(new light("", "Habitación Niños", "off", R.drawable.secundary, "low"));
+                        lights.add(new light("", "Habitación Bebés", "off", R.drawable.kids, "low"));
+                        lights.add(new light("", "Baño público", "off", R.drawable.bpublic, "low"));
+                        lights.add(new light("", "Baño Privado", "off", R.drawable.bprivate, "low"));
+                        lights.add(new light("", "Cocina", "off", R.drawable.kitchen, "low"));
+                        lights.add(new light("", "Living", "off", R.drawable.living, "low"));
+                        lights.add(new light("", "Estacionamiento", "off", R.drawable.garage, "low"));
                         break;
-                    case High:
-                        seekBar.setProgress(2);
-                        txtSeekBarDescription.setText("ALTO");
-                        break;
+                    case 500: Toast.makeText(view.getContext(), "Error en el servidor", Toast.LENGTH_SHORT).show(); break;
+                    default: Log.e(TAG, "Respuesta " + response.code() + " no soportada por la aplicacion."); break;
                 }
-                break;
-            case On:
-                seekBar.setVisibility(View.GONE);
-                txtSeekBarDescription.setVisibility(View.GONE);
-                imageButton.setBackground(getResources().getDrawable(R.drawable.light_on));
-                imageButton.setTag("on");
-                break;
-            case Off:
-                seekBar.setVisibility(View.GONE);
-                txtSeekBarDescription.setVisibility(View.GONE);
-                imageButton.setBackground(getResources().getDrawable(R.drawable.light_off));
-                imageButton.setTag("off");
-                break;
-        }
+                RecSensorsAdapter adapter = new RecSensorsAdapter(view.getContext(), lights);
+                adapter.setOnClickListener(adapterOnItemClick());
+                recSensors.setAdapter(adapter);
 
+            }
+
+            @Override
+            public void onFailure(Call<List<light>> call, Throwable t) {
+                Toast.makeText(getActivity().getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 
-    private void changeShow(Boolean show){
-        if (show) {
-            manager.setVisibility(View.VISIBLE);
-            backlayout.setVisibility(View.VISIBLE);
-            recSensors.setVisibility(View.GONE);
-        } else {
-            manager.setVisibility(View.GONE);
-            backlayout.setVisibility(View.GONE);
-            recSensors.setVisibility(View.VISIBLE);
-        }
+    private Callback<light> CallBackSet(){
+        return new Callback<light>() {
+            @Override
+            public void onResponse(Call<light> call, Response<light> response) {
+                String message = "";
+                switch(response.code()){
+                    case 200: message = "OK"; break;
+                    case 500: message = "Error en el servidor"; break;
+                    default: Log.e(TAG, "Respuesta " + response.code() + " no soportada por la aplicacion."); break;
+                }
+                Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<light> call, Throwable t) {
+                Toast.makeText(getActivity().getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
     }
+    /*########### END CALLBACK LISTENERS ###########*/
 
 }
 
