@@ -1,11 +1,10 @@
 package com.jdk.qwerty.home.Fragments;
-
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.jdk.qwerty.home.Adapter.RecSensorsAdapter;
 import com.jdk.qwerty.home.MainActivity;
 import com.jdk.qwerty.home.Objects.door;
@@ -23,14 +21,12 @@ import com.jdk.qwerty.home.Objects.light;
 import com.jdk.qwerty.home.R;
 import java.util.ArrayList;
 import java.util.List;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by Administrador on 02/12/2017.
  */
 
+@SuppressLint("ValidFragment")
 public class Light extends Fragment {
 
     private static final String TAG = "Light tab";
@@ -46,6 +42,12 @@ public class Light extends Fragment {
     private View view;
     private light currentLight;
     private int currentIndex;
+
+    @SuppressLint("ValidFragment")
+    public Light(List<light> list){
+        lights = new ArrayList<>();
+        lights.addAll(list);
+    }
 
     @Nullable
     @Override
@@ -72,8 +74,10 @@ public class Light extends Fragment {
         recSensors = view.findViewById(R.id.recSensorsLight); //Contenedor lista de lights
         //Build RecyclerView with adapter
         recSensors.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
+        RecSensorsAdapter adapter = new RecSensorsAdapter(view.getContext(), lights);
+        adapter.setOnClickListener(adapterOnItemClick());
+        recSensors.setAdapter(adapter);
 
-        MainActivity.My_Controller.getLightAll(this.CallBackGet());
         this.Start();
         return view;
     }
@@ -228,7 +232,7 @@ public class Light extends Fragment {
             @Override
             public void onClick(View view) {
                 light data = getForm();
-                MainActivity.My_Controller.setLight(data, CallBackSet());
+                MainActivity.MqttClient.Public("light$" + data.getLocation(), data.getStatus() + ":" + data.getMode());
                 lights.set(currentIndex, data);
                 recSensors.getAdapter().notifyDataSetChanged();
                 Start();
@@ -259,65 +263,6 @@ public class Light extends Fragment {
         };
     }
     /*########### END EVENTS LISTENERS ###########*/
-
-    /*########### START CALLBACK LISTENERS ###########*/
-    private Callback<List<light>> CallBackGet() {
-        return new Callback<List<light>>() {
-            @Override
-            public void onResponse(Call<List<light>> call, Response<List<light>> response) {
-
-                lights = new ArrayList<>();
-                switch(response.code()){
-                    case 200:
-                        for(light data: response.body())
-                            lights.add(data);
-                        break;
-                    case 401:
-                        lights.add(new light("", "Habitación Matrimonial", "off", R.drawable.principal, "low"));
-                        lights.add(new light("", "Habitación Niños", "off", R.drawable.secundary, "low"));
-                        lights.add(new light("", "Habitación Bebés", "off", R.drawable.kids, "low"));
-                        lights.add(new light("", "Baño público", "off", R.drawable.bpublic, "low"));
-                        lights.add(new light("", "Baño Privado", "off", R.drawable.bprivate, "low"));
-                        lights.add(new light("", "Cocina", "off", R.drawable.kitchen, "low"));
-                        lights.add(new light("", "Living", "off", R.drawable.living, "low"));
-                        lights.add(new light("", "Estacionamiento", "off", R.drawable.garage, "low"));
-                        break;
-                    case 500: Toast.makeText(view.getContext(), "Error en el servidor", Toast.LENGTH_SHORT).show(); break;
-                    default: Log.e(TAG, "Respuesta " + response.code() + " no soportada por la aplicacion."); break;
-                }
-                RecSensorsAdapter adapter = new RecSensorsAdapter(view.getContext(), lights);
-                adapter.setOnClickListener(adapterOnItemClick());
-                recSensors.setAdapter(adapter);
-
-            }
-
-            @Override
-            public void onFailure(Call<List<light>> call, Throwable t) {
-                Toast.makeText(getActivity().getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
-
-    private Callback<light> CallBackSet(){
-        return new Callback<light>() {
-            @Override
-            public void onResponse(Call<light> call, Response<light> response) {
-                String message = "";
-                switch(response.code()){
-                    case 200: message = "OK"; break;
-                    case 500: message = "Error en el servidor"; break;
-                    default: Log.e(TAG, "Respuesta " + response.code() + " no soportada por la aplicacion."); break;
-                }
-                Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Call<light> call, Throwable t) {
-                Toast.makeText(getActivity().getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
-    /*########### END CALLBACK LISTENERS ###########*/
 
 }
 

@@ -1,20 +1,20 @@
 package com.jdk.qwerty.home.Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.jdk.qwerty.home.Adapter.RecSensorsAdapter;
 import com.jdk.qwerty.home.MainActivity;
 import com.jdk.qwerty.home.Objects.door;
@@ -22,18 +22,17 @@ import com.jdk.qwerty.home.Objects.temp;
 import com.jdk.qwerty.home.R;
 import java.util.ArrayList;
 import java.util.List;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by Administrador on 02/12/2017.
  */
 
+@SuppressLint("ValidFragment")
 public class Temp extends Fragment {
     private static final String TAG = "Temp tab";
     private RecyclerView recSensors;
     private ImageView imageButton;
+    //public NumberPicker numberPicker;
     private LinearLayout manager;
     private RelativeLayout backLayout;
     private ImageButton imageButtonOk;
@@ -51,6 +50,12 @@ public class Temp extends Fragment {
         changeShow(false);
     }
 
+    @SuppressLint("ValidFragment")
+    public Temp(List<temp> list){
+        temps = new ArrayList<>();
+        temps.addAll(list);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,6 +63,7 @@ public class Temp extends Fragment {
 
         //We indentify ids of light_tab.xml objects
         imageButton = (ImageButton)view.findViewById(R.id.imageButtonTemp);
+        //numberPicker = (NumberPicker)view.findViewById(R.id.numberPicker);
         manager = view.findViewById(R.id.managerTemp);
         backLayout = view.findViewById(R.id.backLayoutTemp);
         imageButtonOk = view.findViewById(R.id.okButtonTemp);
@@ -67,11 +73,21 @@ public class Temp extends Fragment {
         imageButtonOk.setOnClickListener(this.imageButtonOkOnClick());
         imageButtonCancel.setOnClickListener(this.imageButtonCancelOnClick());
 
-        recSensors = (RecyclerView) view.findViewById(R.id.recSensorsTemp);
-        //Build RecyclerView with adapter
-        recSensors.setLayoutManager(new GridLayoutManager(this.getContext(), 1));
+        /*String[] list = new String[33];
+        int position = 0;
+        for(int i = 18; i <= 50; i++){
+            list[position] = i+ "";
+            position++;
+        }
+        numberPicker.setDisplayedValues(list);*/
 
-        MainActivity.My_Controller.getTempAll(this.CallBackGet());
+        //Build RecyclerView with adapter
+        recSensors = (RecyclerView) view.findViewById(R.id.recSensorsTemp);
+        recSensors.setLayoutManager(new GridLayoutManager(this.getContext(), 1));
+        RecSensorsAdapter adapter = new RecSensorsAdapter(view.getContext(), temps);
+        adapter.setOnClickListener(adapterOnItemClick());
+        recSensors.setAdapter(adapter);
+
         this.Start();
         return view;
     }
@@ -155,7 +171,7 @@ public class Temp extends Fragment {
             public void onClick(View view) {
 
                 temp data = getForm();
-                MainActivity.My_Controller.setTemp(data, CallBackSet());
+                MainActivity.MqttClient.Public("temp$" + data.getLocation(), data.getStatus() + ":" + data.getMaxTemp());
                 temps.set(currentIndex, data);
                 recSensors.getAdapter().notifyDataSetChanged();
                 Start();
@@ -187,58 +203,5 @@ public class Temp extends Fragment {
         };
     }
     /*######### END EVENT LISTENERS #########*/
-
-    /*########### START CALLBACK LISTENERS ###########*/
-    private Callback<List<temp>> CallBackGet() {
-        return new Callback<List<temp>>() {
-            @Override
-            public void onResponse(Call<List<temp>> call, Response<List<temp>> response) {
-
-                temps = new ArrayList<>();
-                switch(response.code()){
-                    case 200:
-                        for(temp data: response.body())
-                            temps.add(data);
-                        break;
-                    case 401:
-                        temps.add(new temp("", "Habitación Matrimonial", "off", R.drawable.principal, 0));
-                        temps.add(new temp("", "Habitación Niños", "off", R.drawable.secundary, 0));
-                        temps.add(new temp("", "Habitación Bebés", "off", R.drawable.kids, 0));
-                        break;
-                    case 500: Toast.makeText(view.getContext(), "Error en el servidor", Toast.LENGTH_SHORT).show(); break;
-                    default: Log.e(TAG, "Respuesta " + response.code() + " no soportada por la aplicacion."); break;
-                }
-                RecSensorsAdapter adapter = new RecSensorsAdapter(view.getContext(), temps);
-                adapter.setOnClickListener(adapterOnItemClick());
-                recSensors.setAdapter(adapter);
-            }
-
-            @Override
-            public void onFailure(Call<List<temp>> call, Throwable t) {
-                Toast.makeText(getActivity().getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
-
-    private Callback<temp> CallBackSet(){
-        return new Callback<temp>() {
-            @Override
-            public void onResponse(Call<temp> call, Response<temp> response) {
-                String message = "";
-                switch(response.code()){
-                    case 200: message = "OK"; break;
-                    case 500: message = "Error en el servidor"; break;
-                    default: Log.e(TAG, "Respuesta " + response.code() + " no soportada por la aplicacion."); break;
-                }
-                Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Call<temp> call, Throwable t) {
-                Toast.makeText(getActivity().getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
-    /*########### END CALLBACK LISTENERS ###########*/
 
 }
