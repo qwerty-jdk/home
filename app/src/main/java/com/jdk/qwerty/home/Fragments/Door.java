@@ -35,7 +35,7 @@ public class Door extends Fragment {
     public Door(List<door> list){
         doors = new ArrayList<>();
         for(door data: list) {
-            data.setImage(data.getStatus().equals("on") ? R.drawable.door_on : R.drawable.door_off);
+            data.setImage(data.getStatus().equals("on") ? "door_on" : "door_off");
             doors.add(data);
         }
     }
@@ -62,8 +62,8 @@ public class Door extends Fragment {
             public void onClick(View view) {
                 door data = doors.get(recSensors.getChildAdapterPosition(view));
                 switch (data.getStatus()){
-                    case "on": data.setStatus("off"); data.setImage(R.drawable.door_off); break;
-                    case "off": data.setStatus("on"); data.setImage(R.drawable.door_on); break;
+                    case "on": data.setStatus("off"); data.setImage("door_off"); break;
+                    case "off": data.setStatus("on"); data.setImage("door_on"); break;
                 }
                 MainActivity.MqttClient.Public("door$" + data.getLocation(), data.getStatus());
                 //MainActivity.My_Controller.setMotorEstac(data, CallBackSet());
@@ -76,7 +76,7 @@ public class Door extends Fragment {
         for(door data: doors)
             if(data.getLocation().equals(location)) {
                 data.setStatus(status);
-                data.setImage(status.equals("on") ? R.drawable.door_on : R.drawable.door_off);
+                data.setImage(status.equals("on") ? "door_on" : "door_off");
                 recSensors.getAdapter().notifyDataSetChanged();
             }
     }

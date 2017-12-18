@@ -11,7 +11,7 @@ public class light extends door {
 
     private String mode;
 
-    public light(String location, String displayName, String status, int image, String mode){
+    public light(String location, String displayName, String status, String image, String mode){
         super(location, displayName, status, image);
         this.setMode(mode);
     }

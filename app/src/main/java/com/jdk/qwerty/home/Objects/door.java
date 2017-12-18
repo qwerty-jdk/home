@@ -13,9 +13,9 @@ public class door {
     private String location;
     private String displayName;
     private String status;
-    private int image;
+    private String image;
 
-    public door(String location, String displayName, String status, int image){
+    public door(String location, String displayName, String status, String image){
         this.setLocation(location);
         this.setDisplayName(displayName);
         this.setStatus(status);
@@ -46,11 +46,11 @@ public class door {
         this.status = status;
     }
 
-    public int getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(int image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

@@ -1,6 +1,7 @@
 package com.jdk.qwerty.home;
 
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static Controller My_Controller;
     public static ClientMQTT MqttClient;
+    public static Resources Resources;
+    public static String PackageName;
 
     //Developent message  (logt + enter) #shortcut
     private static final String TAG = "MainActivity";
@@ -46,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         buildController();
         setContentView(R.layout.activity_main);
+
+        Resources = getResources();
+        PackageName = getPackageName();
 
         //Get config to mqtt server on api rest
         My_Controller.getMqttBroker(this.CallbackGetMqttBroker());

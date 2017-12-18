@@ -5,12 +5,27 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/imgSensor"
-        android:layout_marginTop="@dimen/sensor_top_image"
+    <RelativeLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imgSensor"
+            android:layout_marginTop="@dimen/sensor_top_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/imgStatus"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="85dp"
+            android:paddingBottom="5dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"/>
+
+    </RelativeLayout>
 
     <TextView
         android:background="@color/primaryLightColor"

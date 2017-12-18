@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jdk.qwerty.home.MainActivity;
 import com.jdk.qwerty.home.Objects.door;
 import com.jdk.qwerty.home.R;
 
@@ -41,7 +42,15 @@ public class RecSensorsAdapter extends RecyclerView.Adapter<RecSensorsAdapter.Se
         try {
             door door = doors.get(position);
             holder.txtName.setText(door.getDisplayName());
-            holder.imgSensor.setImageResource(door.getImage());
+            holder.imgSensor.setImageResource(MainActivity.Resources.getIdentifier(door.getImage(), "drawable", MainActivity.PackageName));
+            if(!door.getClass().getSimpleName().equals("door")){
+                switch (door.getStatus()){
+                    case "on": holder.imgStatus.setImageResource(R.drawable.on); break;
+                    case "off": holder.imgStatus.setImageResource(R.drawable.off); break;
+                    case "auto": holder.imgStatus.setImageResource(R.drawable.auto); break;
+                    default: holder.imgStatus.setImageResource(R.drawable.off); break;
+                }
+            }
         }catch(Exception ex){
             System.out.println("KLG-Error en " + this.getClass().toString() + ".onBindViewHolder(): " + ex.getMessage());
         }
@@ -66,11 +75,13 @@ public class RecSensorsAdapter extends RecyclerView.Adapter<RecSensorsAdapter.Se
     class SensorViewHolder extends RecyclerView.ViewHolder {
         final TextView txtName;
         final ImageView imgSensor;
+        final ImageView imgStatus;
 
         SensorViewHolder(View view) {
             super(view);
             txtName = (TextView)  view.findViewById(R.id.txtName);
             imgSensor = (ImageView) view.findViewById(R.id.imgSensor);
+            imgStatus = (ImageView) view.findViewById(R.id.imgStatus);
         }
     }
 }

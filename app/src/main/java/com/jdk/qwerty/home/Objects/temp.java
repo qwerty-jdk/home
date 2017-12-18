@@ -12,7 +12,7 @@ public class temp extends door {
     private Integer currentTemp;
     private Integer maxTemp;
 
-    public temp(String location, String displayName, String status, Integer image, Integer currentTemp, Integer maxTemp){
+    public temp(String location, String displayName, String status, String image, Integer currentTemp, Integer maxTemp){
         super(location, displayName, status, image);
         this.setCurrentTemp(currentTemp);
         this.setMaxTemp(maxTemp);
