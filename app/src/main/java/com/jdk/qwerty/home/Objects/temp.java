@@ -9,11 +9,21 @@ import org.json.JSONObject;
 
 public class temp extends door {
 
+    private Integer currentTemp;
     private Integer maxTemp;
 
-    public temp(String location, String displayName, String status, Integer image, Integer maxTemp){
+    public temp(String location, String displayName, String status, Integer image, Integer currentTemp, Integer maxTemp){
         super(location, displayName, status, image);
+        this.setCurrentTemp(currentTemp);
         this.setMaxTemp(maxTemp);
+    }
+
+    public Integer getCurrentTemp() {
+        return currentTemp;
+    }
+
+    public void setCurrentTemp(Integer currentTemp) {
+        this.currentTemp = currentTemp;
     }
 
     public Integer getMaxTemp() {

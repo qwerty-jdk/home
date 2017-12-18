@@ -31,4 +31,5 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
     compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    compile 'com.shawnlin:number-picker:2.4.4' /*https://android-arsenal.com/details/1/3718*/
 }

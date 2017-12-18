@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,6 +97,25 @@ public class Light extends Fragment {
         currentIndex = 0;
 
         changeShow(false);
+    }
+
+    public void ChangeStatus(String location, String status, String mode){
+        try{
+            for(door data: lights)
+                if(data.getLocation().equals(location)) {
+                    ((light)data).setStatus(status);
+                    ((light)data).setMode(mode);
+                    if(currentLight != null && currentLight.getLocation().equals(location)){
+                        currentLight = (light) data;
+                        setForm(currentLight);
+                    }
+                    break;
+                }
+            recSensors.getAdapter().notifyDataSetChanged();
+        }catch(Exception ex){
+            Log.d(TAG, "ChangeStatus: " + ex.getMessage());
+            ex.printStackTrace();
+        }
     }
 
     private light getForm(){

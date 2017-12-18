@@ -72,5 +72,14 @@ public class Door extends Fragment {
         };
     }
 
+    public void ChangeStatus(String location, String status) {
+        for(door data: doors)
+            if(data.getLocation().equals(location)) {
+                data.setStatus(status);
+                data.setImage(status.equals("on") ? R.drawable.door_on : R.drawable.door_off);
+                recSensors.getAdapter().notifyDataSetChanged();
+            }
+    }
+
 }
 
